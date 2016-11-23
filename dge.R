@@ -39,8 +39,8 @@ if (substring(dir, nchar(dir)) != "/") dir = paste0(dir, "/")
 anno = args[4]
 # - samples configuration file
 config = read.delim(args[5], row.names = "SAMPLE")
-lib_sizes = config$LIBRARY_SIZE
-config$LIBRARY_SIZE = NULL
+lib_sizes = config$LIBSIZE
+config$LIBSIZE = NULL
 groups = config$GROUP
 groups = factor(groups, levels = unique(groups))
 
@@ -62,7 +62,7 @@ rownames(dge$counts) = sub("\\.\\d+$", "", rownames(dge$counts))
 # - less than 10 counts per million
 # - in at least 2 samples
 dge$samples$lib.size = lib_sizes
-keep = rowSums(cpm(dge) > 10) >= 2
+keep = rowSums(cpm(dge$counts) > 10) >= 2
 dge = dge[keep, ]
 
 # Calculate normalization factors to account for varying library sizes
@@ -99,10 +99,10 @@ annotations = read.delim(anno, quote = "", header = T,
                          row.names = "Ensembl.Transcript.ID")
 annotations = annotations[rownames(cpm),]
 cpm = data.frame("Transcript.ID" = rownames(cpm),
-                 annotations[, c("Ensembl.Gene.ID", "Description")],
+                 "Ensembl.Gene.ID" = annotations[, "Ensembl.Gene.ID"],
                  cpm,
                  annotations[, setdiff(colnames(annotations),
-                                       c("Ensembl.Gene.ID", "Description"))])
+                                       "Ensembl.Gene.ID")])
 write.table(cpm, paste0(outdir, "cpm.txt"),
             sep = "\t", quote = F, row.names = F)
 outfiles = append(outfiles, paste0(outdir, "cpm.txt"))
