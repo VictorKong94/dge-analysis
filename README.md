@@ -2,8 +2,8 @@
 
 ### Terminal command
 
-`Rscript <path_to_dge.R> <method> <counts_directory> <annotations_file>
-<samples_config_file> -j <job1> <job2> ...`
+`Rscript <path_to_dge.R> <experiment_name> <method> <counts_directory>
+<gene_annotations_file> <samples_config_file> -j <job1> <job2> ...`
 
 ### Available methods
 
