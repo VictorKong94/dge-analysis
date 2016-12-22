@@ -2,8 +2,12 @@
 
 ### Terminal command
 
-`Rscript <path_to_dge.R> <method> <counts_directory> <annotations_file>
-<samples_config_file> -j <job1> <job2> ...`
+`Rscript <path_to_dge.R> <counts_directory> <experiment> <method>
+<annotations_file> <samples_config_file> <job1>,<job2>,...`
+
+### Experiment name
+
+Should be a single string unbroken by whitespace.
 
 ### Available methods
 
@@ -13,4 +17,4 @@
 
 ### Jobs
 
-Format is `-j <baseline1>,<treatment1> <baseline2>,<treatment2> ...`
+Format is `<baseline1>:<treatment1>,<baseline2>:<treatment2>,...`
