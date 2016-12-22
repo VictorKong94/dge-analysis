@@ -9,32 +9,25 @@ library(ggplot2)
 #########
 
 # Run from command line using:
-#   `Rscript path/to/dge.R <counts_directory> <experiment_name> <method>
-#    <gene_annotations_file> <samples_config_file> -j <job1> <job2> ...`
+#   `Rscript path/to/dge.R <counts_directory> <experiment> <method>
+#    <annotations_file> <samples_config_file> <job1>,<job2>,...`
 args = commandArgs(trailingOnly = F)
 args = args[grep("--file=", args):length(args)]
 args[1] = substring(args[1], 8)
 args = args[-grep("--args", args)]
 command = paste("Rscript", paste(args, collapse = " "))
 
-# Extract job specifications
-if (is.na(match("-j", args))) stop("No jobs specifed")
-jobs = args[match("-j", args):length(args)]
-if (length(jobs) == 1) stop("No jobs specified")
-jobs = jobs[-1]
-args = args[1:(match("-j", args) - 1)]
-if (length(args) != 5) {
-  stop(paste("Use `Rscript path/to/dge.R <counts_directory> <experiment_name>",
-             "<method> <gene_annotations_file> <samples_config_file>",
-             "-j <job1> <job2> ...`"))
-}
-
 # Pull parameters passed from command line
+if (length(args) != 7) {
+  stop(paste("Use `Rscript path/to/dge.R <counts_directory> <experiment>",
+             "<method> <annotations_file> <samples_config_file>",
+             "<job1>,<job2>,...`"))
+}
 # - directory containing *.counts files
 dir = args[2]
 if (substring(dir, nchar(dir)) != "/") dir = paste0(dir, "/")
 # - experiment name
-expName = args[3]
+experiment = args[3]
 # - method (either "--et", "--lrt", or "--qlf")
 method = args[4]
 if (!(method %in% c("--et", "--lrt", "--qlf"))) stop("Invalid method argument")
@@ -46,9 +39,11 @@ lib_sizes = config$LIBSIZE
 config$LIBSIZE = NULL
 groups = config$GROUP
 groups = factor(groups, levels = unique(groups))
+# - job specifications
+jobs = unlist(strsplit(args[7], ","))
 
 # Specify directory to which to save analysis files
-outdir = sub("counted/", paste0("analysis/", expName), dir)
+outdir = sub("counted/", paste0("analysis/", experiment, "/"), dir)
 outfiles = character()
 
 # Find and import files with counts data
@@ -119,7 +114,7 @@ outfiles = append(outfiles, paste0(outdir, "cpm.txt"))
 
 # Complete the analysis for each job specified
 for (job in jobs) {
-  job = strsplit(job, ",")[[1]]
+  job = strsplit(job, ":")[[1]]
 
   # Perform analysis using method selected by user
   if (method == "--et") {
