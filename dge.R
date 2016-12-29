@@ -43,7 +43,10 @@ groups = factor(groups, levels = unique(groups))
 jobs = unlist(strsplit(args[7], ","))
 
 # Specify directory to which to save analysis files
-outdir = sub("counted/", paste0("analysis/", experiment, "/"), dir)
+outdir = sub("counted/", paste0("analysis/",
+                                experiment,
+                                "/"), dir)
+logdir = sub("counted/", "qa/analysis/")
 outfiles = character()
 
 # Find and import files with counts data
@@ -172,4 +175,9 @@ log = paste0(
   paste0("\t- ", outfiles, collapse = "\n"), "\n",
   "- FINISHED: ", finished, "\n",
   "- ELAPSED: ", finished - started, " secs\n")
-write(log, paste0(outdir, "dge_analysis_log.yml"))
+write(log, paste0(logdir,
+                  "dge_analysis_log_",
+                  gsub(" ", "_", date()),
+                  "_",
+                  experiment,
+                  ".yml"))
