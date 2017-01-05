@@ -44,7 +44,7 @@ jobs = unlist(strsplit(args[7], ","))
 
 # Specify directory to which to save analysis files
 outdir = sub("counted/", paste0("analysis/", experiment, "/"), dir)
-logdir = sub("counted/", "qa/analysis/", dir)
+logdir = sub("counted/", "logs/analysis/", dir)
 outfiles = character()
 
 # Find and import files with counts data
